@@ -1,46 +1,72 @@
 pipeline {
     agent any
+
     environment {
-        SONARQUBE = 'SonarQube'  // Name of the SonarQube server you configured in Jenkins
+        // Define any environment variables if needed, for example, SonarQube configuration
+        SONARQUBE_URL = 'http://your-sonarqube-server-url'
     }
+
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from GitHub repository
-                git 'https://github.com/your-repository.git'
+                // Checkout the code from GitHub
+                git 'https://github.com/Nayana192003/mern-backend.git'
             }
         }
+
         stage('Install Dependencies') {
             steps {
-                // Install dependencies (for Node.js project)
-                sh 'npm install'
-            }
-        }
-        stage('SonarQube Analysis') {
-            steps {
-                // Run SonarQube analysis
                 script {
-                    // Trigger SonarQube analysis using SonarScanner
-                    sh """
-                        sonar-scanner \
-                        -Dsonar.projectKey=your_project_key \
-                        -Dsonar.sources=./src \
-                        -Dsonar.host.url=http://localhost:9000 \
-                        -Dsonar.login=your_sonarqube_token
-                    """
+                    // Install dependencies using npm
+                    sh 'npm install'
                 }
             }
         }
+
         stage('Build') {
             steps {
-                // Run your build commands here (e.g., npm build for Node.js)
-                sh 'npm run build'
+                script {
+                    // Run the build process (e.g., if using npm run build)
+                    sh 'npm run build'
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                script {
+                    // Run tests (e.g., npm test)
+                    sh 'npm test'
+                }
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    // Run SonarQube analysis using SonarScanner
+                    withSonarQubeEnv('SonarQube') {
+                        sh 'npm run sonar'
+                    }
+                }
             }
         }
     }
+
     post {
         always {
-            // Clean up actions, like archiving artifacts, etc.
+            echo 'This will always run after the build, regardless of success or failure.'
+            // You can add cleanup steps or notifications here
+        }
+        
+        success {
+            echo 'Build succeeded!'
+            // You can add actions to notify success, such as sending emails or Slack messages
+        }
+
+        failure {
+            echo 'Build failed!'
+            // You can add actions to notify failure, such as sending emails or Slack messages
         }
     }
 }
