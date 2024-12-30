@@ -1,18 +1,6 @@
 pipeline {
     agent any
-
-    environment {
-        // Add environment variables if needed
-    }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                // Checkout the code from the GitHub repository
-                git branch: 'main', url: 'https://github.com/Nayana192003/mern-backend.git'
-            }
-        }
-
+    
         stage('Install Dependencies') {
             steps {
                 script {
