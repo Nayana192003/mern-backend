@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        sonarRunner 'SonarQube Scanner'  // Replace with the name you found
+        sonarQube 'SonarQube Scanner'  // Replace with the name you found
     }
 
     stages {
