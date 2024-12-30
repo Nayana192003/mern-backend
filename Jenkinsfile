@@ -2,32 +2,37 @@ pipeline {
     agent any
 
     environment {
-        // SonarQube server configuration
-        SONARQUBE_SERVER = 'SonarQube' // Name configured in Jenkins
-        SONARQUBE_URL = 'http://localhost:9000/'
-        SONAR_PROJECT_KEY = 'mern-backend'
+        SONAR_HOST_URL = 'http://localhost:9000' // Your SonarQube server URL
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out source code...'
+                checkout scm
+            }
+        }
+
         stage('Build') {
             steps {
                 echo 'Building the project...'
-                // Use Windows batch commands
                 bat 'npm install'
             }
         }
 
         stage('SonarQube Analysis') {
+            environment {
+                // Fetch the SonarQube token securely from Jenkins credentials
+                SONAR_TOKEN = credentials('SonarQubeToken') // Use the ID you gave when adding the token to Jenkins
+            }
             steps {
                 echo 'Running SonarQube analysis...'
-                withSonarQubeEnv("${SONARQUBE_SERVER}") {
-                    bat """
-                    sonar-scanner -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                                  -Dsonar.sources=./src \
-                                  -Dsonar.host.url=${SONARQUBE_URL} \
-                                  -Dsonar.login=<your-sonar-token>
-                    """
-                }
+                bat """
+                sonar-scanner -Dsonar.projectKey=mern-backend ^
+                              -Dsonar.sources=./src ^
+                              -Dsonar.host.url=$SONAR_HOST_URL ^
+                              -Dsonar.login=$SONAR_TOKEN
+                """
             }
         }
 
@@ -40,18 +45,15 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                echo 'Deploying project...'
-                bat 'deploy_script.bat'
+                echo 'Deploying the application...'
+                // Add deployment steps here
             }
         }
     }
 
     post {
-        always {
-            echo 'Pipeline execution complete.'
-        }
         success {
-            echo 'Pipeline executed successfully.'
+            echo 'Pipeline executed successfully!'
         }
         failure {
             echo 'Pipeline failed.'
