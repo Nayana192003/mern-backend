@@ -10,8 +10,8 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building the project...'
-                // Example build command (adjust as needed)
-                sh 'npm install'
+                // Use Windows batch commands instead of Unix shell
+                bat 'npm install'  // for Windows
             }
         }
 
@@ -35,14 +35,15 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Running tests...'
-                // Add your test commands (e.g., npm test)
+                bat 'npm test'  // for Windows
             }
         }
 
         stage('Deploy') {
             steps {
                 echo 'Deploying project...'
-                // Add your deploy commands here
+                // Add your deploy commands here, use bat for Windows
+                bat 'deploy_script.bat'
             }
         }
     }
