@@ -2,22 +2,21 @@ pipeline {
     agent any
 
     environment {
-        // Define any environment variables if needed, for example, SonarQube configuration
-        SONARQUBE_URL = 'http://your-sonarqube-server-url'
+        // You can add environment variables here if needed
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from GitHub
-                git 'https://github.com/Nayana192003/mern-backend.git'
+                // Checkout the code from the GitHub repository
+                git branch: 'main', url: 'https://github.com/Nayana192003/mern-backend.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
                 script {
-                    // Install dependencies using npm
+                    // Install the necessary dependencies using npm
                     sh 'npm install'
                 }
             }
@@ -26,7 +25,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    // Run the build process (e.g., if using npm run build)
+                    // Run build command (you can adjust this if you have a build script)
                     sh 'npm run build'
                 }
             }
@@ -35,7 +34,7 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    // Run tests (e.g., npm test)
+                    // Run tests (adjust this according to your testing setup)
                     sh 'npm test'
                 }
             }
@@ -45,9 +44,7 @@ pipeline {
             steps {
                 script {
                     // Run SonarQube analysis using SonarScanner
-                    withSonarQubeEnv('SonarQube') {
-                        sh 'npm run sonar'
-                    }
+                    sh 'sonar-scanner'
                 }
             }
         }
@@ -56,17 +53,14 @@ pipeline {
     post {
         always {
             echo 'This will always run after the build, regardless of success or failure.'
-            // You can add cleanup steps or notifications here
         }
-        
+
         success {
             echo 'Build succeeded!'
-            // You can add actions to notify success, such as sending emails or Slack messages
         }
 
         failure {
             echo 'Build failed!'
-            // You can add actions to notify failure, such as sending emails or Slack messages
         }
     }
 }
