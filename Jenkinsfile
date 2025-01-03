@@ -1,25 +1,46 @@
 pipeline {
     agent any
-
-    tools {
-        SonarQube 'SonarQube'  // Replace with the name you found
+    environment {
+        SONARQUBE = 'SonarQube'  // Name of the SonarQube server you configured in Jenkins
     }
-
     stages {
         stage('Checkout') {
             steps {
-                echo 'Checking out code from GitHub repository'
-                git 'https://github.com/your-repository.git'
+                // Checkout the code from GitHub repository
+                git 'https://github.com/Nayana192003/mern-backend.git'
             }
         }
-
+        stage('Install Dependencies') {
+            steps {
+                // Install dependencies (for Node.js project)
+                sh 'npm install'
+            }
+        }
         stage('SonarQube Analysis') {
             steps {
-                echo 'Running SonarQube analysis...'
-                withSonarQubeEnv('MySonarQube') {
-                    sh 'sonar-scanner -Dsonar.projectKey=my-project -Dsonar.sources=./src -Dsonar.host.url=http://localhost:9000 -Dsonar.login=$SONAR_TOKEN'
+                // Run SonarQube analysis
+                script {
+                    // Trigger SonarQube analysis using SonarScanner
+                    sh """
+                        sonar-scanner \
+                        -Dsonar.projectKey=your_project_key \
+                        -Dsonar.sources=./src \
+                        -Dsonar.host.url=http://localhost:9000 \
+                        -Dsonar.login=your_sonarqube_token
+                    """
                 }
             }
+        }
+        stage('Build') {
+            steps {
+                // Run your build commands here (e.g., npm build for Node.js)
+                sh 'npm run build'
+            }
+        }
+    }
+    post {
+        always {
+            // Clean up actions, like archiving artifacts, etc.
         }
     }
 }
