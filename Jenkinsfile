@@ -2,15 +2,15 @@ pipeline {
     agent any
     environment {
         SONARQUBE = 'SonarQube'  // Name of the SonarQube server you configured in Jenkins
-        SONARQUBE_TOKEN = 'sqp_3c91dd70eef0be4404743cb3d90a17b7ade3f030' // Your actual token
-        SONARQUBE_URL = 'http://localhost:9000' // SonarQube server URL
-        SONAR_PROJECT_KEY = 'mern-backend' // SonarQube project key for your project
+        SONARQUBE_TOKEN = 'sqp_3c91dd70eef0be4404743cb3d90a17b7ade3f030' // Replace with your actual token
+        SONARQUBE_URL = 'http://localhost:9000' // Replace with your SonarQube server URL
+        SONAR_PROJECT_KEY = 'mern-backend' // Replace with your actual SonarQube project key
     }
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from GitHub repository
-                git 'https://github.com/Nayana192003/mern-backend.git' // Your GitHub repository URL
+                // Checkout the code from GitHub repository, specify the branch
+                git branch: 'main', url: 'https://github.com/Nayana192003/mern-backend.git'  // Replace with your GitHub repo URL
             }
         }
         stage('Install Dependencies') {
